@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 RUN apt-get update && \
   apt-get -y install wget sudo && \
@@ -18,7 +18,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install libtool-bin libpng-dev fre
 
 RUN wget -O /tmp/guacamole-server-1.2.0.tar.gz https://downloads.morpheusdata.com/files/guacamole-server-1.2.0.tar.gz && \
   export PKG_CONFIG=/usr/bin/pkg-config && \
-  export CPPFLAGS=-I/usr/local/include && \
+  export CPPFLAGS="-I/usr/local/include -Wno-error=deprecated-declarations" && \
   export LDFLAGS=-L/usr/local/lib && \
   cd /tmp && \
   tar -xzf guacamole-server-1.2.0.tar.gz && \

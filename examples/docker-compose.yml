@@ -1,16 +1,29 @@
-version: "3"
+version: '3'
+
 services:
   es:
-    image: elasticsearch:8.11.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.2
     container_name: es
     environment:
       - discovery.type=single-node
-      - ELASTIC_PASSWORD=elastic
-      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - TAKE_FILE_OWNERSHIP=1
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     volumes:
-      - ./esdata:/usr/share/elasticsearch/data
+      - esdata:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
     healthcheck:
-      test: curl -u elastic:elastic -s -f es:9200/_cat/health >/dev/null || exit 1
+      test: ["CMD-SHELL", "curl -s http://localhost:9200 >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
     networks:
       - morphnet
 
@@ -41,8 +54,8 @@ services:
       - morphnet
 
   morpheus:
-    image: morpheus:6.3.3-1
-    #image: ghcr.io/tryfan/morpheus:5.4.5-2
+    image: morpheus:latest
+    # image: ghcr.io/tryfan/morpheus:5.4.5-2
     container_name: morpheus
     environment:
       - MORPHEUS_APPLIANCE_URL=https://localhost
@@ -71,9 +84,13 @@ services:
         condition: service_healthy
       rmq:
         condition: service_healthy
-
     networks:
       - morphnet
 
 networks:
-  morphnet: {}
+  morphnet:
+    driver: bridge
+
+volumes:
+  esdata:
+    driver: local
