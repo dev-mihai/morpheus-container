@@ -44,13 +44,19 @@ sudo systemctl status docker
 # Clone the Morpheus container repository
 git clone https://github.com/dev-mihai/morpheus-container.git
 
+# Change to the cloned repository directory
+cd morpheus-container/
+
+# Build Docker image for Morpheus
+docker build --pull --rm -f "Dockerfile" -t morpheus:7.0.5-1 "."
+
 # Change to the examples directory
-cd morpheus-container/examples
+cd examples
 
 # Start the Docker Compose services
 docker-compose up -d
 
-# Test the login endpoint (optional)
+# Test the login endpoint
 curl -vk https://localhost/login/auth
 ```
 
