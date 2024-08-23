@@ -54,7 +54,7 @@ services:
       - morphnet
 
   morpheus:
-    image: morpheus:6.3.3-1
+    image: morpheus:7.0.5-1
     # image: ghcr.io/tryfan/morpheus:5.4.5-2
     container_name: morpheus
     environment:
